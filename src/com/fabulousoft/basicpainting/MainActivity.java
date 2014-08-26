@@ -2,7 +2,9 @@ package com.fabulousoft.basicpainting;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+
 import android.support.v7.app.ActionBarActivity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -47,7 +49,6 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		newBtn.setOnClickListener(this);
 		saveBtn = (ImageButton) findViewById(R.id.save_btn);
 		saveBtn.setOnClickListener(this);
-		file = new File(Environment.getExternalStorageDirectory().toString() + "/Pictures", "character.PNG");
 	}
 
 	@Override
@@ -177,21 +178,30 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
+
 							try {
+								file = new File(Environment
+										.getExternalStorageDirectory()
+										.toString()
+										+ "/Pictures", "character.PNG");
+								if (file.exists()) {
+									file.delete();
+								}
 								os = new FileOutputStream(file);
+								drawingView.invalidate();
 								drawingView.getDrawingCache(true);
 								drawingView.buildDrawingCache();
 								bitmap = drawingView.getDrawingCache();
-								bitmap.compress(Bitmap.CompressFormat.PNG, 100,os);
-								os.flush();
-								os.close();
-								Toast.makeText(getApplicationContext(),
+								bitmap.compress(Bitmap.CompressFormat.PNG, 100,
+										os);
+								Toast.makeText(
+										getApplicationContext(),
 										"The character has been saved successfully.",
 										Toast.LENGTH_LONG).show();
 							} catch (Exception e) {
 								Toast.makeText(
 										getApplicationContext(),
-										"Oops oops! The character could not be saved." ,
+										"Oops oops! The character could not be saved.",
 										Toast.LENGTH_LONG).show();
 							}
 
